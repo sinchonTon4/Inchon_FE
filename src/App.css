@@ -1,0 +1,44 @@
+@font-face {
+  font-family: "SCD-Thin";
+  src: url("./styles/fonts/SCDream1.otf");
+}
+
+@font-face {
+  font-family: "SCD-ExtraLight";
+  src: url("./styles/fonts/SCDream2.otf");
+}
+
+@font-face {
+  font-family: "SCD-Light";
+  src: url("./styles/fonts/SCDream3.otf");
+}
+
+@font-face {
+  font-family: "SCD-Regular";
+  src: url("./styles/fonts/SCDream4.otf");
+}
+
+@font-face {
+  font-family: "SCD-Medium";
+  src: url("./styles/fonts/SCDream1.otf");
+}
+
+@font-face {
+  font-family: "SCD-Bold";
+  src: url("./styles/fonts/SCDream1.otf");
+}
+
+@font-face {
+  font-family: "SCD-ExtraBold";
+  src: url("./styles/fonts/SCDream1.otf");
+}
+
+@font-face {
+  font-family: "SCD-Heavy";
+  src: url("./styles/fonts/SCDream1.otf");
+}
+
+@font-face {
+  font-family: "SCD-Black";
+  src: url("./styles/fonts/SCDream1.otf");
+}
