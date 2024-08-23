@@ -7,33 +7,35 @@ import { useNavigate, useParams } from "react-router-dom";
 import { instance } from "../../api/instance";
 
 const mockData = {
-  id: "id",
-  title: "test",
-  description: "test",
-  img: "url",
-  tag: 1,
-  price: 500,
-  product_name: "[자연실록] 완숙 토마토 1kg ",
-  link: "wdslkfajlkdfjla",
+  id: 5,
+  created_at: "2024-08-23",
+  title: "책 살 사람",
+  description: "나랑 책 사람",
+  img: "/media/cobying_images/%ED%8F%AC%ED%8F%AC%EC%A6%88_%EB%B0%98%EB%A0%A4%EB%8F%99%EB%AC%BC_%EC%9E%A5%EB%A1%80%EC%8B%9D%EC%9E%A5_%EC%84%B8%EC%A2%85%EC%A0%90_icUNYag.png",
+  price: 1000,
+  product_name: "책",
+  link: "http://www.naver.com",
   people_num: 0,
   product_category: "food",
-  created_at: "2024-08-24",
+  tag: 1,
 };
 
 const ShareDetail = () => {
   const { id } = useParams();
-  const [data, setData] = useState({});
+  // const [mockData, setMockData] = useState({});
   const nav = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await instance.get(`/cobying/${id}`);
-        setData(res.data);
+        const res = await instance.get(`/cobying/${id}/`);
+        console.log(res);
+
+        // setMockData(res.data);
       } catch (error) {
         console.error(error);
       }
     };
-    // fetchData();
+    fetchData();
   }, []);
   const onApply = () => {
     const fetchData = async () => {
@@ -45,7 +47,7 @@ const ShareDetail = () => {
         console.error(error);
       }
     };
-    // fetchData();
+    fetchData();
     alert("참여가 완료되었습니다");
     nav("/shareMain");
   };

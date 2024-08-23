@@ -41,10 +41,14 @@ const Login = () => {
       setIsPending(true);
       try {
         const res = await instance.post("/login/", body);
+        console.log(res);
+
         if (res.status === 200) {
           localStorage.setItem("access_token", res.data.access_token);
           localStorage.setItem("id", res.data.id);
           localStorage.setItem("username", res.data.username);
+          alert("로그인 성공");
+
           nav("/");
         } else {
           alert("아이디 혹은 비번이 틀렸습니다");
@@ -55,8 +59,7 @@ const Login = () => {
       }
       setIsPending(false);
     };
-    // fetchData();
-    alert("회원가입 성공");
+    fetchData();
   };
 
   return (

@@ -95,7 +95,7 @@ const SignUp = () => {
       };
       setIsPending(true);
       try {
-        const res = await instance.post("/user/signup/", body);
+        const res = await instance.post("/signup/", body);
         if (res.status === 200) {
           nav("/");
         }
@@ -106,6 +106,7 @@ const SignUp = () => {
     };
     fetchData();
     alert("회원가입 성공");
+    nav("/");
   };
 
   const onSubmitValidEmail = () => {

@@ -74,7 +74,7 @@ const ShareMain = () => {
               return (
                 <ShareContent
                   onClick={() => {
-                    nav(`/shareDetail/`);
+                    nav(`/shareDetail/1`);
                   }}
                   className="sharecontent"
                 >
@@ -113,7 +113,7 @@ const ShareMain = () => {
               return (
                 <ShareContentSecond
                   onClick={() => {
-                    nav(`/shareDetail/`);
+                    nav(`/shareDetail/1`);
                   }}
                   className="sharecontent"
                 >

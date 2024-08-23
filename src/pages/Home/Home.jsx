@@ -86,7 +86,7 @@ const Home = () => {
               return (
                 <ShareContent
                   onClick={() => {
-                    nav(`/shareDetail/`);
+                    nav(`/shareDetail/1`);
                   }}
                   className="sharecontent"
                 >
