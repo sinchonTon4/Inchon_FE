@@ -16,7 +16,7 @@ export default Headers;
 const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
-  height: 164px;
+  height: 18vh;
   background: #53acff;
   position: relative;
 `;

@@ -99,7 +99,7 @@ const SignUp = () => {
           nav("/");
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
       setIsPending(false);
     };
