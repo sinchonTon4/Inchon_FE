@@ -20,27 +20,27 @@
 
 @font-face {
   font-family: "SCD-Medium";
-  src: url("./styles/fonts/SCDream1.otf");
+  src: url("./styles/fonts/SCDream5.otf");
 }
 
 @font-face {
   font-family: "SCD-Bold";
-  src: url("./styles/fonts/SCDream1.otf");
+  src: url("./styles/fonts/SCDream6.otf");
 }
 
 @font-face {
   font-family: "SCD-ExtraBold";
-  src: url("./styles/fonts/SCDream1.otf");
+  src: url("./styles/fonts/SCDream7.otf");
 }
 
 @font-face {
   font-family: "SCD-Heavy";
-  src: url("./styles/fonts/SCDream1.otf");
+  src: url("./styles/fonts/SCDream8.otf");
 }
 
 @font-face {
   font-family: "SCD-Black";
-  src: url("./styles/fonts/SCDream1.otf");
+  src: url("./styles/fonts/SCDream8.otf");
 }
 
 @font-face {
