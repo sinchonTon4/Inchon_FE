@@ -1,47 +1,91 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
+import styled from "styled-components";
 
-function FileInput({ name, value, onChange }) {
-  const [preview, setPreview] = useState();
-  const inputRef = useRef();
+const FileWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  height: 200px;
+  background: #d9d9d9;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  line-height: 200px;
+  color: #fff;
+  font-size: 100px;
+  cursor: pointer;
 
-  const handleChange = (e) => {
-    const nextValue = e.target.files[0];
-    onChange(name, nextValue);
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #53acff;
+    cursor: pointer;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .plus-icon {
+    font-size: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const FileInput = () => {
+  const [preview, setPreview] = useState(null);
+  const inputRef = useRef(null);
+
+  const handleChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleClearClick = () => {
-    const inputNode = inputRef.current;
-    if (!inputNode) return;
-
-    inputNode.value = "";
-    onChange(name, null);
+    setPreview(null);
+    if (inputRef.current) {
+      inputRef.current.value = null; // Clear file input
+    }
   };
 
-  useEffect(() => {
-    if (!value) return;
-
-    // 파일에 대한 object URL 생성
-    const objectURL = URL.createObjectURL(value);
-    setPreview(objectURL);
-
-    // 컴포넌트가 언마운트되거나 `value`가 변경될 때 object URL 해제
-    return () => {
-      URL.revokeObjectURL(objectURL);
-      setPreview(null);
-    };
-  }, [value]);
+  const handleClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click(); // Trigger file input click
+    }
+  };
 
   return (
-    <div>
-      {preview && <img src={preview} alt="이미지 미리보기" />}
+    <FileWrapper onClick={handleClick}>
+      {preview && <img src={preview} alt="미리보기" />}
       <input type="file" onChange={handleChange} ref={inputRef} />
-      {value && (
+      {preview && (
         <button type="button" onClick={handleClearClick}>
           X
         </button>
       )}
-    </div>
+      {!preview && <div className="plus-icon">+</div>}
+    </FileWrapper>
   );
-}
+};
 
 export default FileInput;
