@@ -1,42 +1,57 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Headers from "../../components/Headers";
-import ShareItem from "./ShareItem";
+import RankItem from "./RankItem";
 import CommunityItem from "./CommunityItem";
 import mockImage from "./mockImage.png";
+import { useNavigate } from "react-router-dom";
+import { instance } from "../../api/instance";
 
 const Home = () => {
-  const [currentShare, setCurrentShare] = useState("foodItem");
+  const [currentShare, setCurrentShare] = useState("fooditem");
   const [currentCommunity, setCurrentCommunity] = useState("total");
   const [dataShare, setDataShare] = useState([]);
   const [dataCommunity, setDataCommunity] = useState([]);
+  const nav = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await instance.get("tributes/footprints/", inputData);
+        const params = {
+          category: currentShare,
+          order: "people_num",
+          page: "1",
+        };
+        const res = await instance.get("/cobying/", { params });
+        console.log(res);
+
         setDataShare(res.data);
       } catch (error) {
         console.error(error);
       }
     };
-    // fetchData();
+    fetchData();
   }, [currentShare]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await instance.get("tributes/footprints/", inputData);
+        const params = {
+          category: currentCommunity,
+          order: "like",
+          page: 1,
+        };
+        const res = await instance.get("/community", { params });
         setDataCommunity(res.data);
       } catch (error) {
         console.error(error);
       }
     };
-    // fetchData();
+    fetchData();
   }, [currentCommunity]);
 
   const onClickBtn = (e) => {
-    if (e.target.name === "foodItem" || e.target.name === "lifeItem") {
+    if (e.target.name === "fooditem" || e.target.name === "lifeitem") {
       setCurrentShare(e.target.name);
     } else {
       setCurrentCommunity(e.target.name);
@@ -51,15 +66,15 @@ const Home = () => {
             <div className="titleTag">인기 공동 구매</div>
             <div className="subTagWrapper">
               <button
-                className={`subTag ${currentShare === "foodItem" ? "isSelected" : ""}`}
-                name="foodItem"
+                className={`subTag ${currentShare === "fooditem" ? "isSelected" : ""}`}
+                name="fooditem"
                 onClick={onClickBtn}
               >
                 식료품
               </button>
               <button
-                className={`subTag ${currentShare === "lifeItem" ? "isSelected" : ""}`}
-                name="lifeItem"
+                className={`subTag ${currentShare === "lifeitem" ? "isSelected" : ""}`}
+                name="lifeitem"
                 onClick={onClickBtn}
               >
                 생필품
@@ -69,15 +84,20 @@ const Home = () => {
           <div className="contentWrapper">
             {[1, 2, 3].map((item) => {
               return (
-                <ShareContent className="sharecontent">
-                  <ShareItem
+                <ShareContent
+                  onClick={() => {
+                    nav(`/shareDetail/`);
+                  }}
+                  className="sharecontent"
+                >
+                  <RankItem
                     rankNum={2}
                     shareAmount={10}
                     totalAmount={50}
                     itemImg={mockImage}
                     itemTitle={"[KF365] 사과 하우스 사과 1kg"}
                     itemPrice={"9,900원"}
-                  ></ShareItem>
+                  ></RankItem>
                 </ShareContent>
               );
             })}
@@ -95,8 +115,8 @@ const Home = () => {
                 전체
               </button>
               <button
-                className={`subTag ${currentCommunity === "cooking" ? "isSelected" : ""}`}
-                name="cooking"
+                className={`subTag ${currentCommunity === "cook" ? "isSelected" : ""}`}
+                name="cook"
                 onClick={onClickBtn}
               >
                 요리
@@ -113,7 +133,12 @@ const Home = () => {
           <div className="contentWrapper">
             {[1, 2, 3].map((item) => {
               return (
-                <CommunityContent className="communitycontent">
+                <CommunityContent
+                  onClick={() => {
+                    nav(`/communityDetail/`);
+                  }}
+                  className="communitycontent"
+                >
                   <CommunityItem
                     rankNum={2}
                     textTitle={"쉬운 화장실 청소법"}

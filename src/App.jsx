@@ -16,13 +16,13 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/shareDetail" element={<ShareDetail />} />
+        <Route path="/shareDetail/:id" element={<ShareDetail />} />
         <Route path="/shareMain" element={<ShareMain />} />
         <Route path="/shareNew" element={<ShareNew />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/communityMain" element={<CommunityMain />} />
         <Route path="/communityNew" element={<CommunityNew />} />
-        <Route path="/communityDetail" element={<CommunityDetail />} />
+        <Route path="/communityDetail/:id" element={<CommunityDetail />} />
       </Routes>
     </BrowserRouter>
   );

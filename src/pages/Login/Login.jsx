@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { instance } from "../../api/instance";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -42,6 +43,8 @@ const Login = () => {
         const res = await instance.post("/login/", body);
         if (res.status === 200) {
           localStorage.setItem("access_token", res.data.access_token);
+          localStorage.setItem("id", res.data.id);
+          localStorage.setItem("username", res.data.username);
           nav("/");
         } else {
           alert("아이디 혹은 비번이 틀렸습니다");

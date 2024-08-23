@@ -2,7 +2,7 @@ import React from "react";
 import mockImage from "./mockImage.png";
 import styled from "styled-components";
 
-const ShareItem = ({
+const RankItem = ({
   rankNum,
   shareAmount,
   totalAmount,
@@ -23,7 +23,7 @@ const ShareItem = ({
   );
 };
 
-export default ShareItem;
+export default RankItem;
 
 const ItemWrapper = styled.div`
   position: relative;

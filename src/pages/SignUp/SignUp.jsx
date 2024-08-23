@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { instance } from "../../api/instance";
 
 // const initValidState = {
 //   username: false,
@@ -103,7 +104,7 @@ const SignUp = () => {
       }
       setIsPending(false);
     };
-    // fetchData();
+    fetchData();
     alert("회원가입 성공");
   };
 
