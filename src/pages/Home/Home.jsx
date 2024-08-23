@@ -14,6 +14,10 @@ const Home = () => {
   const [dataCommunity, setDataCommunity] = useState([]);
   const nav = useNavigate();
 
+  const gotoMain = () => {
+    nav("/communityMain");
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -105,7 +109,9 @@ const Home = () => {
         </div>
         <div className="sectionWrapper">
           <div className="tagWrapper">
-            <div className="titleTag">커뮤니티 인기글</div>
+            <div className="titleTag" onClick={gotoMain}>
+              커뮤니티 인기글
+            </div>
             <div className="subTagWrapper">
               <button
                 className={`subTag ${currentCommunity === "total" ? "isSelected" : ""}`}
@@ -194,6 +200,7 @@ const SectionWrapper = styled.div`
     font-style: normal;
     font-weight: 500;
     line-height: 74px;
+    cursor: pointer;
     /* padding: 16px 25px 16px 25px; */
     width: 350px;
     height: 74px;

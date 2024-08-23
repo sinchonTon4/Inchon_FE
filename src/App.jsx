@@ -22,6 +22,7 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/communityMain" element={<CommunityMain />} />
         <Route path="/communityNew" element={<CommunityNew />} />
+        <Route path="/communityDetail/1" element={<CommunityDetail />} />
         <Route path="/communityDetail/:id" element={<CommunityDetail />} />
       </Routes>
     </BrowserRouter>

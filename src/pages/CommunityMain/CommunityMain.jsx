@@ -1,338 +1,332 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import Headers from "../../components/Headers";
 import styled from "styled-components";
-import Headers from "../../components/Headers.jsx";
-import dumi from "../../assets/dumi.svg";
-import { instance } from "../../api/instance.js";
+import share from "../../assets/share.svg";
+import heart from "../../assets/heart.svg";
+import profile1 from "../../assets/profile1.svg";
+import profile2 from "../../assets/profile2.svg";
+import commentUp from "../../assets/commentUp.svg";
+import axios from "axios";
+import foodImg from "../../assets/foodItem.svg";
 
-const LIMIT = 9; // Number of items per page
+const CommunityDetail = () => {
+  const { community_id } = useParams(); // community_id 가져오기
+  const [like, setLike] = useState(0);
+  const [comment, setComment] = useState("");
+  const [commentItems, setCommentItems] = useState([]);
+  const [detail, setDetail] = useState({});
 
-const CommunityMainItem = ({ item, index }) => {
-  const navigate = useNavigate();
+  const dumi = [
+    {
+      user_id: 1,
+      community_id: 1,
+      description: "오늘 점심은 뭐 먹을까요? 우동? 돈까스?ㅋㅋㅋ",
+      like: 0,
+    },
+    {
+      user_id: 2,
+      community_id: 1,
+      description: "저는 돈까스가 좋네요! 👍",
+      like: 2,
+    },
+    {
+      user_id: 3,
+      community_id: 1,
+      description: "우동도 맛있지만 돈까스가 더 매력적이죠!",
+      like: 5,
+    },
+  ];
 
-  const goDetail = (id) => {
-    navigate(`/comunity/${id}`);
+  const user_id = localStorage.getItem("id") || "1"; // Default to "1" if no value is found
+
+  const onClickLike = () => {
+    setLike(like + 1);
   };
 
-  return (
-    <ItemWrap>
-      <CircleBlue>{index}</CircleBlue>
-      <WritingItem>
-        <ItemContent>
-          <ItemTitle>
-            <div onClick={() => goDetail(item.id)}>{item.title}</div>
-          </ItemTitle>
-          {/* <TagContents>
-            {item.tags.map((tag, i) => (
-              <OneTag key={i}>{tag}</OneTag> // Add a unique key for each tag
-            ))}
-          </TagContents> */}
-        </ItemContent>
-        <ItemImg src={item.img || dumi} />
-      </WritingItem>
-    </ItemWrap>
-  );
-};
-
-const CommunityMain = () => {
-  const navigate = useNavigate();
-  const [order, setOrder] = useState("최신순");
-  const [category, setCategory] = useState(""); // Set default category to empty string
-  const [items, setItems] = useState(["dkjnw"]);
-  const [offset, setOffset] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
-
-  const handleCategoryChange = (newCategory) => {
-    setCategory(newCategory);
-    setOffset(0); // Reset offset when category changes
-    setItems([]); // Clear current items
+  const handleChange = (e) => {
+    setComment(e.target.value);
   };
 
-  const handleOrderChange = () => {
-    setOrder((prevOrder) => (prevOrder === "최신순" ? "공감순" : "최신순"));
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const GotoNew = () => {
-    navigate("/communityNew");
-  };
+    // 댓글 데이터 설정
+    const commentData = {
+      user_id: user_id,
+      community_id: community_id,
+      description: comment,
+      like: 0,
+    };
 
-  const fetchPosts = async (category, order, offset) => {
-    const isOrder = order === "공감순" ? "like" : "";
     try {
-      const response = await instance.get(`/community`, {
-        params: {
-          category: category,
-          order: isOrder,
-          page: 1, // Calculate page number from offset
-        },
-      });
+      const response = await axios.post(
+        `/comments/${community_id}`,
+        commentData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      // Extract data from response
-      const data = response.data.results.data;
-      const nextUrl = response.data.next;
-      const count = response.data.count;
-      const hasNext = nextUrl !== null;
-
-      // Update state with new data and pagination status
-      setItems((prevItems) => [...prevItems, ...data]);
-      setHasNext(hasNext);
+      if (response.status === 200) {
+        setCommentItems([...commentItems, response.data]);
+        setComment(""); // 댓글 입력 필드 비우기
+      } else {
+        console.error("댓글 작성 실패:", response.statusText);
+      }
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("서버 요청 중 오류 발생:", error);
     }
   };
 
-  const handleLoadMore = () => {
-    setOffset((prevOffset) => prevOffset + LIMIT);
-  };
+  useEffect(() => {
+    const fetchPostDetail = async () => {
+      try {
+        const response = await axios.get(`/community/${community_id}`);
+        if (response.status === 200) {
+          const data = response.data;
+          setDetail(data);
+          setLike(data.like); // 게시물의 like 수 설정
+        } else {
+          console.error("게시물 데이터 가져오기 실패:", response.statusText);
+        }
+      } catch (error) {
+        console.error("게시물 데이터 요청 중 오류 발생:", error);
+      }
+    };
+
+    fetchPostDetail();
+  }, [community_id]);
 
   useEffect(() => {
-    fetchPosts(category, order, offset);
-  }, [category, order, offset]);
+    // Placeholder for future effects if needed
+  }, [commentItems]);
 
   return (
     <div>
       <Headers />
-      <ButtonWrap>
-        <CategoryButton
-          isActive={category === ""}
-          onClick={() => handleCategoryChange("")}
-        >
-          전체
-        </CategoryButton>
-        <CategoryButton
-          isActive={category === "cook"}
-          onClick={() => handleCategoryChange("cook")}
-        >
-          요리
-        </CategoryButton>
-        <CategoryButton
-          isActive={category === "lifestyle"}
-          onClick={() => handleCategoryChange("lifestyle")}
-        >
-          생활
-        </CategoryButton>
-      </ButtonWrap>
-
-      <WritingComponet>
-        <OrderBox>
-          <button className="write" onClick={GotoNew}>
-            글쓰기
-          </button>
-          <button className="toggle" onClick={handleOrderChange}>
-            {order === "최신순" ? "공감순" : "최신순"}
-          </button>
-        </OrderBox>
-        {items.length > 0 ? (
-          <>
-            <ItemWrapper>
-              {items.map((item, index) => (
-                <CommunityMainItem
-                  key={item.id}
-                  item={item}
-                  index={index + 1}
-                />
-              ))}
-            </ItemWrapper>
-          </>
-        ) : (
-          <div className="notext">작성된 글이 없습니다.</div>
-        )}
-      </WritingComponet>
-
-      {hasNext && <button onClick={handleLoadMore}>더 보기</button>}
+      <WriteDetailBox>
+        <TagTitle>
+          <WriteTitle>{detail.title || "식료품 공구 방법"}</WriteTitle>
+          <TagBox>
+            {/* Render tags if available */}
+            {detail.tags?.map((tag, index) => (
+              <TagOneBox key={index}>{tag}</TagOneBox>
+            ))}
+          </TagBox>
+        </TagTitle>
+        <MiddleSection>
+          <CircleBox>
+            <div className="CircleOne">
+              <BlueImg onClick={onClickLike} src={heart} />
+              <p className="like">{like || 0}</p>
+            </div>
+            <div>
+              <BlueImg src={share} />
+            </div>
+          </CircleBox>
+          <ImgCenter src={detail.img || foodImg} alt="Community" />
+          <div></div>
+        </MiddleSection>
+        <UserWriting>
+          {detail.description ||
+            "건강과 지속 가능성을 추구하는 이들을 위해, 맛과 영양이 가득한 채식 요리 레시피를 소개합니다. 이 글에서는 간단하지만 맛있는 채식 요리 10가지를 선보입니다. 첫 번째 레시피는 아보카도 토스트, 아침 식사로 완벽하며 영양소가 풍부합니다. 두 번째는 콩과 야채를 사용한 푸짐한 채식 칠리, 포만감을 주는 동시에 영양소를 공급합니다. 세 번째는 색다른 맛의 채식 패드타이, 고소한 땅콩 소스로 풍미를 더합니다. 네 번째는 간단하고 건강한 콥 샐러드, 신선한 야채와 단백질이 가득합니다. 다섯 번째로는 향긋한 허브와 함께하는 채식 리조또, 크리미한 맛이 일품입니다. 여섯 번째는 에너지를 주는 채식 스무디 볼, 과일과 견과류의 완벽한 조합입니다. 일곱 번째는 건강한 채식 버거, 만족감 있는 식사를 제공합니다. 여덟 번째는 채식 파스타 프리마베라, 신선한 야채와 토마토 소스의 조화가 뛰어납니다. 아홉 번째는 채식 볶음밥, 풍부한 맛과"}
+        </UserWriting>
+      </WriteDetailBox>
+      <CommentComp>
+        <CommnetTitle>댓글</CommnetTitle>
+        <CommentBack>
+          {(commentItems.length > 0 ? commentItems : dumi).map((item, index) => (
+            <CommentOneBox key={index}>
+              <div>
+                <img src={profile1} alt="profile" />
+              </div>
+              <p>{item.description}</p>
+            </CommentOneBox>
+          ))}
+        </CommentBack>
+        <CommentNewBox onSubmit={handleSubmit}>
+          <img src={profile2} alt="profile" />
+          <CommentInput value={comment} onChange={handleChange} />
+          <img src={commentUp} className="commentUp" onClick={handleSubmit} />
+        </CommentNewBox>
+      </CommentComp>
     </div>
   );
 };
 
-export default CommunityMain;
+export default CommunityDetail;
 
-// Styled components here...
+// Styled components...
 
-const ButtonWrap = styled.div`
-  width: calc(100% - 335px);
-  margin: 47px 167.5px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  gap: 90px;
-`;
-
-const CategoryButton = styled.button`
-  cursor: pointer;
-  width: 20%;
-  max-width: 350px;
-  height: 78px;
-  flex: 1;
-  background: ${({ isActive }) => (isActive ? "#53acff" : "#C0E1FF")};
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
-  border: none;
-  color: ${({ isActive }) => (isActive ? "#fff" : "#53ACFF")};
-  text-align: center;
-  font-family: "SCD_Medium";
-  font-size: 35px;
-  font-style: normal;
-  line-height: normal;
-`;
-
-const WritingComponet = styled.div`
-  position: relative;
-  min-height: 628px;
-  width: calc(100% - 235px);
-  margin: 0 117.5px;
+const WriteDetailBox = styled.div`
+  margin: 60px 76px 37px;
+  width: calc(100% - 152px);
   background: #f6f6f6;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  overflow: scroll;
-
-  .notext {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #53acff;
-    text-align: center;
-    font-family: "SCD_Medium";
-    margin-top: 100px;
-  }
-`;
-
-const ItemWrap = styled.div`
-  width: calc(100% - 152px);
-  margin: 20px 76px;
-  height: 255px;
-  padding: 20px 0;
-  position: relative;
-`;
-
-const CircleBlue = styled.div`
-  background: #53acff;
-  font-size: 35px;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  position: absolute;
-  top: -30px;
-  left: -30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  z-index: 10;
-`;
-
-const WritingItem = styled.div`
-  height: 200px;
-  border-top: 5px solid #53acff;
-  background: #fff;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  position: relative;
-`;
-
-const OrderBox = styled.div`
-  position: absolute;
-  width: 300px;
-  margin-bottom: 20px;
-  display: flex;
-  gap: 20px;
-  height: 50px;
-  z-index: 10;
-  text-align: center;
-  top: 21px;
-  right: 74px;
-
-  .write {
-    cursor: pointer;
-    width: 181px;
-    border: none;
-    font-family: "SCD_Medium";
-    color: #53acff;
-    text-align: center;
-    font-size: 20px;
-    background: #c0e1ff;
-    line-height: normal;
-  }
-
-  .toggle {
-    cursor: pointer;
-    width: 181px;
-    border: none;
-    font-family: "SCD_Medium";
-    color: #fff;
-    text-align: center;
-    font-size: 20px;
-    background: #53acff;
-    line-height: normal;
-  }
-`;
-
-const ItemWrapper = styled.div`
-  position: relative;
-  margin-top: 30px;
-  padding-top: 30px;
-`;
-
-const ItemTitle = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-
-  div {
-    width: 40%;
-    color: #fff;
-    text-align: center;
-    font-family: "SCD_Medium";
-    font-size: 20px;
-    max-width: 311px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: normal;
-    background: #53acff;
-    height: 50px;
-  }
-`;
-
-const ItemContent = styled.div`
-  width: 65%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  gap: 30px;
+`;
+
+const TagTitle = styled.div`
+  width: calc(100% - 90px);
+  margin: 54px 47px 0;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const WriteTitle = styled.div`
+  width: 40%;
+  height: 112px;
+  background: #53acff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  text-align: center;
+  font-family: "SCD_Medium";
+  font-size: 50px;
+  line-height: normal;
+  display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 150px 0 60px;
-  gap: 27px;
 `;
 
-const TagContents = styled.div`
-  width: 100%;
+const TagBox = styled.div`
+  width: 60%;
+  height: 112px;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  height: 52px;
-  gap: 20px;
+  align-items: center;
+  margin: 0 40px;
 `;
 
-const OneTag = styled.div`
-  width: 20%;
+const TagOneBox = styled.div`
+  height: 60px;
   background: #c0e1ff;
+  width: 30%;
   color: #53acff;
   text-align: center;
   font-family: "SCD_Medium";
   font-size: 30px;
   line-height: normal;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 `;
 
-const ItemImg = styled.img`
-  width: 20%;
-  height: 80%;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-left: 20px;
-  z-index: 5;
-  position: absolute;
-  top: 20px;
-  right: 40px;
+const MiddleSection = styled.div`
+  width: calc(100% - 90px);
+  margin: 0 47px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const CircleBox = styled.div`
+  margin: 10px 0 0 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 85px;
+
+  .CircleOne {
+    text-align: center;
+  }
+
+  .like {
+    height: 10px;
+  }
+`;
+
+const BlueImg = styled.img`
+  width: 45px;
+`;
+
+const ImgCenter = styled.img`
+  width: 220px;
+  height: 220px;
+`;
+
+const UserWriting = styled.div`
+  margin: 5px 60px 30px;
+  width: calc(100% - 120px);
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  min-height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  line-height: 150%;
+`;
+
+const CommentComp = styled.div`
+  width: calc(100% - 256px);
+  margin: 0 128px 56px;
+  background: #f6f6f6;
+  min-height: 500px;
+`;
+
+const CommnetTitle = styled.div`
+  width: 198px;
+  height: 92px;
+  color: #53acff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "SCD_Medium";
+  font-size: 40px;
+  line-height: normal;
+  text-align: center;
+  background: #c0e1ff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+`;
+
+const CommentBack = styled.div`
+  background-color: #fff;
+  width: calc(100% - 300px);
+  margin: 30px 150px 18px;
+  height: 257px;
+  padding: 15px;
+  overflow-y: auto; /* Changed to auto */
+`;
+
+const CommentNewBox = styled.form`
+  width: calc(100% - 504px);
+  margin: 0 252px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+`;
+
+const CommentInput = styled.input`
+  width: 100%;
+  min-width: 200px;
+  background: #c0e1ff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border: none;
+  color: #000;
+  text-align: center;
+  font-family: "SCD_Medium";
+  font-size: 15px;
+  line-height: normal;
+`;
+
+const CommentOneBox = styled.div`
+  width: calc(100% - 530px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 26px;
+  p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 33px;
+    background: #c0e1ff;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  }
 `;

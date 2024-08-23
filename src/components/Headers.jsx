@@ -1,11 +1,14 @@
 import styled from "styled-components";
+import profile from "../assets/profile1.svg";
 
 const Headers = () => {
   return (
     <HeaderWrapper>
       <HeaderBox>
         <Logo>유니빌</Logo>
-        <Profile>프</Profile>
+        <Profile>
+          <img src={profile} />
+        </Profile>
       </HeaderBox>
     </HeaderWrapper>
   );
@@ -44,4 +47,7 @@ const Logo = styled.div`
 const Profile = styled.div`
   color: #fff;
   font-size: 18px;
+  img {
+    width: 60px;
+  }
 `;
