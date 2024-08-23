@@ -42,3 +42,8 @@
   font-family: "SCD-Black";
   src: url("./styles/fonts/SCDream1.otf");
 }
+
+@font-face {
+  font-family: "SSanTokki";
+  src: url("./styles/fonts/HSSanTokki.ttf");
+}

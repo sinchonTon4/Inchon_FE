@@ -86,5 +86,5 @@ const CommunityMain = () => {
 export default CommunityMain;
 
 const MyDiv = styled.div`
-  font-family: "SCD-Thin";
+  font-family: "SSanTokki";
 `;
